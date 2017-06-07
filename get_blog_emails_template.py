@@ -2,20 +2,23 @@ import imaplib
 import email
 import datetime
 import sys
+import shutil
 
 def get_blog_emails():
 	try:
 		gmail = imaplib.IMAP4_SSL('imap.gmail.com')
 		gmail.login('genereicusername1@gmail.com', 'password')
 		gmail.list()
-		gmail.select('blog_journal')
-		
+		gmail.select('blog_journal') # A custom filter to seperate emails intended for posting
 		type, data = gmail.search(None, 'ALL')
 		
+		## Read current contents, header, and latest date from txt file
 		file = open("blog_journal_template.txt", "r")
 		previous_postings = file.read().split("\n")
-		last_date = previous_postings[0]
-		output = []
+		header = previous_postings[0:6]
+		previous_postings = previous_postings[7:]
+		last_date = previous_postings[1]
+		output = header
 		
 		for x in range(len(data[0].split())):
 			latest = data[0].split()[x]
@@ -35,8 +38,13 @@ def get_blog_emails():
                 ## Generate postings
                 posting = [date, "----------", body, "", ""]
                 output.extend(posting)
-                
-    output.extend(previous_postings)
-    fileout = open("blog_journal_template.txt", "w")
-    for line in output:
-        fileout.write('%s\n' % line)
+    
+        ## Rewrite the txt file
+        output.extend(previous_postings)
+        fileout = open("blog_journal_template.txt", "w")
+        for line in output:
+            fileout.write('%s\n' % line)
+    
+        ## Save as .md
+        #shutil.copyfile("blog_journal_template.txt", "blog_journal_template.md")
+        

@@ -1,6 +1,9 @@
-Wed, 7 Jun 2017 02:00:00 -0700
-----------
-test2
+-----
+Hexo header placeholder
+author
+tags
+	tag1
+-----
 
 
 Tue, 6 Jun 2017 21:56:00 -0700
