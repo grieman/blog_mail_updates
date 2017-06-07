@@ -36,7 +36,7 @@ def get_blog_emails():
                     body = msg.get_payload()
 			
                 ## Generate postings
-                posting = [date, "----------", body, "", ""]
+                posting = ['#### ' + date, "---", body, "", ""]
                 output.extend(posting)
     
         ## Rewrite the txt file
@@ -46,5 +46,5 @@ def get_blog_emails():
             fileout.write('%s\n' % line)
     
         ## Save as .md
-        #shutil.copyfile("blog_journal_template.txt", "blog_journal_template.md")
+        shutil.copyfile("blog_journal_template.txt", "blog_journal_template.md")
         
