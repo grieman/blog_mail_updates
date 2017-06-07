@@ -13,7 +13,9 @@ def get_blog_emails():
 		type, data = gmail.search(None, 'ALL')
 		
 		file = open("blog_journal_template.txt", "r")
-		last_date = file.readline().rstrip()
+		previous_postings = file.read().split("\n")
+		last_date = previous_postings[0]
+		output = []
 		
 		for x in range(len(data[0].split())):
 			latest = data[0].split()[x]
@@ -22,19 +24,19 @@ def get_blog_emails():
 			raw_email = raw_email.decode('utf-8')
 			msg = email.message_from_string(raw_email)
 			date = msg['Date']
-			
+	
 			## Section to compare date to most recent date, only proceed if more recent
-			if datetime.datetime.strptime(date,"%a, %d %b %Y %H:%M:%S %z") <= datetime.datetime.strptime(last_date,"%a, %d %b %Y %H:%M:%S %z")
-			    sys.exit()
+			if datetime.datetime.strptime(date,"%a, %d %b %Y %H:%M:%S %z") > datetime.datetime.strptime(last_date,"%a, %d %b %Y %H:%M:%S %z"):
+			    if msg.is_multipart():
+                    body = msg.get_payload(0).get_payload()
+                else:
+                    body = msg.get_payload()
 			
-            if msg.is_multipart():
-                body = msg.get_payload(0).get_payload()
-            else:
-                body = msg.get_payload()
-			
-            ## Write to md file
-            ## date
-            ## -----
-            ## body
-            
-            
+                ## Generate postings
+                posting = [date, "----------", body, "", ""]
+                output.extend(posting)
+                
+    output.extend(previous_postings)
+    fileout = open("blog_journal_template.txt", "w")
+    for line in output:
+        fileout.write('%s\n' % line)
